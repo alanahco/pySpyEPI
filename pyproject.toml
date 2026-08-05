@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools >= 38.6", "pip >= 10"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pySpyEPI"
+version = "0.0.1"
+description = 'Detects Equatorial Plasma Bubble Irregularities (EPIs)'
+readme = "README.md"
+requires-python = ">=3.9"
+license = {file = "LICENSE"}
+authors = [
+    {name = "Alanah Cardenas-O'Toole", email = "alanahco@umich.edu"}
+]
+keywords = [
+  "equatorial plasma bubble",
+  "ionosphere",
+  "EPB",
+  "equatorial plasma irregularity",
+  "heliophysics",
+]
+dependencies = [
+  "apexpy",
+  "cartopy",
+  "cdflib",
+  "matplotlib",
+  "netCDF4",
+  "numpy",
+  "pandas",
+  "pydarn",
+  "scipy",
+  "madrigalWeb",
+  "viresclient",
+  "cdasws",
+  "pyValEIA"
+  ]
