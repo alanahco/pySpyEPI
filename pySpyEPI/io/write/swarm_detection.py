@@ -288,7 +288,6 @@ def swarm_detect_daily(date_array, satellite, fdir, file_dir, fig_dir=None,
                 continue
 
             # eia detect
-            print(pass_id)
             eia_df, eia_state, plats = eia_stats.eia_info(
                 pass_id, time, lat, lon, mlat, mlon, lt, alt, ne,
                 "Ne", mlat_val=eia_mlat, filt='barrel_average',
@@ -301,7 +300,7 @@ def swarm_detect_daily(date_array, satellite, fdir, file_dir, fig_dir=None,
                 # get barrel, trough, and peak values
                 (barrel_df, cand_df, peaks, properties,
                  pass_id, trough_lats) = build.find_cand(
-                     IRR_auroral, obs, satellite, ne_flag=ne_flag, trough=True,
+                     IRR_auroral, obs, satellite, trough=True,
                      equator_bound=equator_bound, auroral_bound=auroral_bound,
                      set_lat=set_lat, barrel_start=barrel_start,
                      det_filt=det_filt, peak_width=peak_width, freq=1,
