@@ -207,15 +207,6 @@ mlat_flag : Depletions above 40 degrees need to be treated skeptically
                 6 : no flags between +/- 25
                 9 : flags present but no 1 flag between +/- 25
             Generally best to keep flags 0, 3, 4.1, and maybe 5.1
-den_flag : density flag based on magnetic latitude and density
-            0 : no flag
-            1 : background < 3 * 10 **5 (no inherent issues)
-            2 : flag 1 and mlat > +/- 25 (no inherent issues)
-            3 : flag 1 and maximum ne for pass/ background at peak >= 20
-                (no inherent issue)
-            6 : flag 1 and 2 and 3, potential issue.
-            This flag is meant to be used with caution and in conjunction with
-            center_prominence, percent_depth, pass_max_np, and/or pass_min_np
 
 ----------------
 Pass Information
