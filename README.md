@@ -1,7 +1,7 @@
 pySpyEPI
 --------
 Python Package for detecting Ionospheric Equatorial Plasma Irregularities
-from in situ plasma density data.
+from in-situ plasma density data.
 
 Notes
 -----
