@@ -1,5 +1,7 @@
 pySpyEPI
 --------
+[![DOI](https://zenodo.org/badge/1324547800.svg)](https://doi.org/10.5281/zenodo.21936221)
+
 Python Package for detecting Ionospheric Equatorial Plasma Irregularities
 from in-situ plasma density data.
 
