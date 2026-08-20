@@ -95,7 +95,7 @@ barrel_slope_right : slope between the plasma density at edge 2 and at peak
 altitude : satellite altitude. remains the same between passes, but may change
             over time
 satellite : satellite letter or number
-fpeak_prom : prominence recorded bu find_peaks
+fpeak_prom : prominence recorded by find_peaks
 ------------------------
 EPI detection parameters
 ------------------------
@@ -143,41 +143,24 @@ epi_flag : flag that indicates if a candidate is considered an EPI
                 * Also recommend keeping if lr_15 is less than 0.95 and
                     l20 and r20 are below 0.95 (can retroactively add this
                     back in)
+p20_wdr_{h, l, r} : 20th percentile of Np / weighted barrel for
+                    halfwidth (h), left side (l), and right side (r) of EPI
+med_wdr_{h, l, r} : median of Np / weighted barrel for
+                    halfwidth (h), left side (l), and right side (r) of EPI
 percent_depth : depth between center and correpsonding barrel point
                 (abs(barrel_df["filt_det_np"].iloc[xp]
                    / barrel_df["filt_np"].iloc[xp])) * 100
                 where filt_np is barrel density, filt_det_np is detrended
                 density, and xp is index at center
-bub_in_bub : 1 if an EPI is detected inside of another EPI
+nested_bub : 1 if an EPI is detected inside of another EPI
             0 means detection is alone or on the outside of another EPI
-flagged_np : 1 if there are flagged points based on plasma denisty
-            between the edges, otherwise it is 0
+pass_wdr_p{15, 25} : 15th and 20th percentile of Np / weighted barrel
+                    for whole pass
 max_freq_dnp20s : maximum frequency from FFT of delta Np 20s
 high_freq : 1 if a freq is  > 0.2 Hz freq of amplitude > 0.5 * max(amplitude)
             0 if not
-barrel_{high, mid, eq}_{south, north}_{ne, mlat}_{max, min} :
-        maximum and minimum barrel background trend density (ne) and
-        corresponding magnetic latitude (mlat) in high mag latitudes
-        (+/- 40 to +/-50) (high), mid mag latitudes (+/-25 to +/-40), and
-        equatorial mag latitudes (0 to +/-25) all are inclusive (<= and >=)
-        note: NaN if no data present for respective region, nanmax and nanmin
-        used
-    Version 1
-    ---------
-    Ldnp_dif : 95th - 5th percentile of dNp 40s from edge1 to center
-    Rdnp_dif : 95th - 5th percentile of dNp 40s from center to edge2
-    Hdnp_dif : halfwidth 95th - 5th percentile of dNp 40s
-    Hdnp_med : median of halfwidth dNp 40s
-    skew : skew of dNp 40s from edge1 to edge2
-    Version 2
-    ----------
-    p20_wdr_{h, l, r} : 20th percentile of Np / weighted barrel for
-                        halfwidth (h), left side (l), and right side (r) of EPI
-    med_wdr_{h, l, r} : median of Np / weighted barrel for
-                        halfwidth (h), left side (l), and right side (r) of EPI
-    pass_wdr_p{15, 25} : 15th and 20th percentile of Np / weighted barrel
-                        for whole pass
-
+flagged_np : 1 if there are flagged points based on plasma denisty
+            between the edges, otherwise it is 0
 ----------------
 Additional Flags
 ----------------
@@ -206,8 +189,15 @@ mlat_flag : Depletions above 40 degrees need to be treated skeptically
                 3 : at least one 1 flag between +/- 25
                 6 : no flags between +/- 25
                 9 : flags present but no 1 flag between +/- 25
-            Generally best to keep flags 0, 3, 4.1, and maybe 5.1
+            Generally best to keep flags 0, 3, 4.1, and 5.1
 
+barrel_{high, mid, eq}_{south, north}_{ne, mlat}_{max, min} :
+        maximum and minimum barrel background trend density (ne) and
+        corresponding magnetic latitude (mlat) in high mag latitudes
+        (+/- 40 to +/-50) (high), mid mag latitudes (+/-25 to +/-40), and
+        equatorial mag latitudes (0 to +/-25) all are inclusive (<= and >=)
+        note: NaN if no data present for respective region, nanmax and nanmin
+        used
 ----------------
 Pass Information
 ----------------
