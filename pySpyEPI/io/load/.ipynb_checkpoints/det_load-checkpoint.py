@@ -134,14 +134,6 @@ def epi_only(epi_df, lt_limit=None, mlat_limit=None):
     """
     bubs = epi_df.copy()
 
-    # Update WDR
-    wdr_mask = ((bubs['epi_flag'] == 9) & (bubs['med_epi_l'] <= 0.995)
-                & (bubs['med_epi_r'] <= 0.995)
-                & (bubs['p20_epi_r'] < 0.95)
-                & (bubs['p20_epi_l'] < 0.95)
-                & (bubs['bub_in_bub'] == 0))
-    bubs.loc[wdr_mask, 'epi_flag'] = 1
-
     # bubble flags
     bubs = bubs[bubs['epi_flag'] == 1]
 
