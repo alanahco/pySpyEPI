@@ -5,6 +5,8 @@ pySpyEPI
 Python Package for detecting Ionospheric Equatorial Plasma Irregularities
 from in-situ plasma density data.
 
+Swarm detection data created by pySpyEPI can be found at https://doi.org/10.5281/zenodo.22015018
+
 Notes
 -----
 
