@@ -316,7 +316,8 @@ def swarm_detect_daily(date_array, satellite, fdir, file_dir, fig_dir=None,
                      upper_weight=upper_weight, lower_weight=lower_weight,
                      scale_n=scale_n, exp_inc=exp_inc, ex_scale=ex_scale,
                      filter_barrel=filter_barrel, svg_window=svg_window,
-                     svg_poly=svg_poly, nflag_mask=nflag_mask)
+                     svg_poly=svg_poly, nflag_mask=nflag_mask, mlon_str='mlon',
+                     alt_str='altitude', lshell_str='l_shell')
 
                 # create figure
                 if fig_on:
