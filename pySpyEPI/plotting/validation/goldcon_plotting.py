@@ -19,7 +19,7 @@ import os
 from pathlib import Path
 
 
-def gold_conj_pans(map_ax, cbar_ax, line_ax, gdc, data_lim, center_time=None,
+def gold_conj_pans(map_ax, cbar_ax, line_ax, gdc, data_lim, gold_input_dir, center_time=None,
                    edge1_mlat=None, edge2_mlat=None, cmap=None, vmin=None,
                    vmax=None, mlat_lim=None, lon_lim=None, sat_time_str='time',
                    sat_lon_str='lon', sat_lat_str='lat', sat_mlat_str='mlat',
@@ -273,7 +273,7 @@ def gold_sat_plot(conjs, sat_data, gold_fold, center_time, edge1_mlat,
 
 
 def gold_sat_dailies(sat_data, gold_fold, center_time, edge1_mlat, edge2_mlat,
-                     fig_dir, max_mindif=60, fig_all=True, cmap=None,
+                     fig_dir, gold_input_dir, max_mindif=60, fig_all=True, cmap=None,
                      vmin=None, vmax=None, mlat_lim=None, lon_lim=None,
                      sat_time_str='time', sat_lon_str='lon', sat_lat_str='lat',
                      sat_mlat_str='mlat', sat_n_str='ne',
@@ -332,10 +332,10 @@ def gold_sat_dailies(sat_data, gold_fold, center_time, edge1_mlat, edge2_mlat,
                             stime.strftime('%m'), stime.strftime('%Y%m%d'))
 
     # create GOLD files
-    gold_load.GOLD_no_barrel(stime, gold_fold, lon_range=None,
+    gold_load.GOLD_no_barrel(stime, gold_fold, gold_input_dir, lon_range=None,
                              closest=False)
     etime = stime + dt.timedelta(days=1)
-    gold_load.GOLD_no_barrel(etime, gold_fold, lon_range=None,
+    gold_load.GOLD_no_barrel(etime, gold_fold, gold_input_dir, lon_range=None,
                              closest=False)
 
     # get conjunctions from sat_data

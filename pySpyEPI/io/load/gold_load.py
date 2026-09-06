@@ -291,7 +291,7 @@ def GOLD_barrel(st, output_data_folder, lon_range=None, closest=False):
                      'depletion': baseline_subtracted_matrix}})
 
 
-def GOLD_no_barrel(st, output_data_folder, lon_range=None, closest=False):
+def GOLD_no_barrel(st, output_data_folder, input_data_folder, lon_range=None, closest=False):
     """create a non-barrel file for desired swarm/ GOLD conjunction.
 
     Parameters
@@ -323,10 +323,10 @@ def GOLD_no_barrel(st, output_data_folder, lon_range=None, closest=False):
     if st.hour < 12:
         # Get GOLD files for day before
         st_use = st - dt.timedelta(days=1)
-        dcA, dcB, timeA, timeB = open_GOLD_nc(st_use)
+        dcA, dcB, timeA, timeB = open_GOLD_nc(st_use, input_data_folder)
     else:
         # Get GOLD files for same day
-        dcA, dcB, timeA, timeB = open_GOLD_nc(st)
+        dcA, dcB, timeA, timeB = open_GOLD_nc(st, input_data_folder)
 
     # get index of conjunction
     min_ind, list_inds = go_ut.get_conj_ind(st, lon_range=lon_range)
