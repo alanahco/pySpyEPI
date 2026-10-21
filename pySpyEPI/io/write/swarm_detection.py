@@ -36,7 +36,7 @@ def swarm_detect_daily(date_array, satellite, fdir, file_dir, fig_dir=None,
                        e_lo_large=0.05, e_up_small=0.1, e_lo_small=0.05,
                        upper_weight=2, lower_weight=1, scale_n=True,
                        exp_inc=True, ex_scale=2, filter_barrel=True,
-                       svg_window=5, svg_poly=2, eia_mlat=30, min_np=10**4):
+                       svg_window=5, svg_poly=2, eia_mlat=30, min_np=0):
     """Create monthly detection files for bubble detection.
 
     Parameters
@@ -180,7 +180,7 @@ def swarm_detect_daily(date_array, satellite, fdir, file_dir, fig_dir=None,
         maximum search magnetic latitude range for EIA type.
     min_np : float
         minimum density allowed before flagged as bad for IRR data
-        default 10 ** 4
+        default 0
     Returns
     -------
     epi_all : list of DataFrame
@@ -404,7 +404,7 @@ def swarm_detect_daily(date_array, satellite, fdir, file_dir, fig_dir=None,
 
 
 def open_dayb4_check(IRR, fdir, satellite, mlat_thresh=70, IRR_only=False,
-                     min_np=10**4):
+                     min_np=0):
     """Open file of day before and incldue it in original dataframes
 
     Parameters
@@ -423,7 +423,7 @@ def open_dayb4_check(IRR, fdir, satellite, mlat_thresh=70, IRR_only=False,
         True will open only IRR file
     min_np : float
         minimum density allowed before flagged as bad
-        default 10 ** 4
+        default 0
     Returns
     -------
     IRR_update : pd.DataFrame

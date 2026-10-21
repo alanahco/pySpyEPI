@@ -17,7 +17,7 @@ from pySpyEPI.utils import coords
 from pySpyEPI.utils.sats import swarm_utils as swu
 
 
-def load_IRR(start_date, end_date, satellite, fdir, min_np=10**4):
+def load_IRR(start_date, end_date, satellite, fdir, min_np=0):
     """Load Swarm IRR dataset.
 
     Parameters
@@ -32,7 +32,7 @@ def load_IRR(start_date, end_date, satellite, fdir, min_np=10**4):
         File directory string
     min_np : float
         minimum density allowed before flagged as bad
-        default 10 ** 4
+        default 0
 
     Returns
     -------
@@ -253,7 +253,7 @@ def load_EFI(start_date, end_date, satellite, fdir):
 
 
 def load_all(start_date, end_date, satellite, fdir, IRR=True, EFI=True,
-             min_np=10**4):
+             min_np=0):
     """Load all four datasets.
 
     Parameters
