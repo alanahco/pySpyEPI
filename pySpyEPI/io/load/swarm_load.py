@@ -272,7 +272,7 @@ def load_all(start_date, end_date, satellite, fdir, IRR=True, EFI=True,
         True default- EFI data will be retreived
     min_np : float
         minimum density allowed before flagged as bad for IRR data
-        default 10 ** 4
+        default 0
     Returns
     -------
     data : Dictionary
@@ -296,7 +296,8 @@ def load_all(start_date, end_date, satellite, fdir, IRR=True, EFI=True,
     # open IRR if True
     if IRR:
         try:
-            IRR_data = load_IRR(start_date, end_date, satellite, fdir=fdir)
+            IRR_data = load_IRR(start_date, end_date, satellite, fdir=fdir,
+                                min_np=min_np)
 
             # if start_date.day != end_date.day
             # Get next day too-- midnight to end_date
