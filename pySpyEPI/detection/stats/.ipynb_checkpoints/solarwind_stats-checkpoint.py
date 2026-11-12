@@ -9,7 +9,7 @@ swind_epi
 """
 import pandas as pd
 from pySpyEPI.barrel import barrel_utils as bar_uts
-from pySpyEPI.depi_io.load import omni_load
+from pySpyEPI.io.load import omni_load
 
 
 def swind_year(day_st, day_ed, param='SYM_H', mval=-30, below=True,

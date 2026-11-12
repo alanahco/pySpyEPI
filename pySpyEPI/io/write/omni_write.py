@@ -104,6 +104,7 @@ def sw_epi(date_array, sat, epi_dir, year_dir):
 
     sym = det_load.load_detections(date_omni, 'symh', year_dir, 'solarwind',
                                    '_omni', daily=False)
+
     al_ind = det_load.load_detections(date_omni, 'al_index', year_dir,
                                       'solarwind', '_omni', daily=False)
 
