@@ -31,7 +31,7 @@ def mlat_flag(p_mlat, flags):
         10 : no flags between +/- 25
         15 : flags present but no 1 flag between +/- 25
         Value can be X.0, X.1, or X.2
-        X.0 means no flags between 25 and 40
+        X.0 means no flags or non-1 flags between 25 and 40
         X.1 means a 1 flag between 25 -> 35 AND 35 -> 40
         X.2 means a 1 flag between 25 and 35 but not 35 to 40
         X.3 means a 1 flag between 35 and 40 but not 25 to 35
@@ -39,13 +39,13 @@ def mlat_flag(p_mlat, flags):
     4, 8, 12 : abs(peak mlat) < 40 degrees and >= 35
         4 : at least one 1 flag between +/- 25
         8 : no flags between +/- 25
-        12 : flags present but no 1 flag between +/- 25
+        12 : flags present but no 1 flag between 0 and +/- 25
         Value can be X.0, X.1, or X.2
         X.0 means no flags between 25 and 35
         X.1 means a 1 flag between 25 and 35
         X.2 means a non 1 flag between 25 and 35
     3, 6, 9 : abs(peak mlat) < 35 degrees and > 25
-        3 : at least one 1 flag between +/- 25
+        3 : at least one 1 flag between 0 and +/- 25
         6 : no flags between +/- 25
         9 : flags present but no 1 flag between +/- 25
     Generally best to keep flags 0, 3, 4.1, and maybe 5.1
@@ -91,10 +91,10 @@ def mlat_flag(p_mlat, flags):
 
     # south check
     # get flags between -25 and 0
-    # if there are no flags, ch_n = 0
-    # if there are flags and one of them is 1, ch_n = 1
-    # if there are flags and none of them are 1, ch_n = 2
-    f_south = flags[(p_mlat >= -25) & (p_mlat < 0)]
+    # if there are no flags, ch_s = 0
+    # if there are flags and one of them is 1, ch_s = 1
+    # if there are flags and none of them are 1, ch_s = 2
+    f_south = flags[(p_mlat >= -25) & (p_mlat <= 0)]
     if len(f_south) == 0:
         ch_s = 0
     else:
@@ -115,7 +115,7 @@ def mlat_flag(p_mlat, flags):
             ch_sm = 2
 
     # check high midlats
-    f_south_highs = flags[(p_mlat >= 35) & (p_mlat < 40)]
+    f_south_highs = flags[(p_mlat <= -35) & (p_mlat > -40)]
 
     if len(f_south_highs) == 0:
         ch_sh = 0
@@ -152,7 +152,7 @@ def mlat_flag(p_mlat, flags):
         elif (ch_m != 1) & (ch_h == 1):
             ch_add = 0.3
         elif (ch_m == 2) | (ch_h == 2):
-            ch_add = 0.3
+            ch_add = 0.4
 
         # adjust ch midlat for 35 to 40 mlat
         ch_m_add = ch_m / 10
