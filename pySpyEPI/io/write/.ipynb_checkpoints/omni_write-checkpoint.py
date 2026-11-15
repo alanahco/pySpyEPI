@@ -132,38 +132,62 @@ def sw_epi(date_array, sat, epi_dir, year_dir):
             # SYM H
             sb4 = nearest(sym['time_start'], ct, direction='before')
             saf = nearest(sym['time_start'], ct, direction='after')
-            b4_iloc = np.where(sb4 == sym['time_start'])[0][0]
-            af_iloc = np.where(saf == sym['time_start'])[0][0]
 
             # before
-            sw_save.at[ei, 'time_sym_dip_b4'] = sb4
-            sw_save.at[ei, 'time_symh_min_b4'] = sym['time_min'].iloc[b4_iloc]
-            sw_save.at[ei, 'time_sym_rec_b4'] = sym['time_end'].iloc[b4_iloc]
-            sw_save.at[ei, 'symh_min_b4'] = sym['symh_min'].iloc[b4_iloc]
+            if sb4 is not np.nan:
+                b4_iloc = np.where(sb4 == sym['time_start'])[0][0]
+                sw_save.at[ei, 'time_sym_dip_b4'] = sb4
+                sw_save.at[ei, 'time_symh_min_b4'] = sym['time_min'].iloc[b4_iloc]
+                sw_save.at[ei, 'time_sym_rec_b4'] = sym['time_end'].iloc[b4_iloc]
+                sw_save.at[ei, 'symh_min_b4'] = sym['symh_min'].iloc[b4_iloc]
+            else:
+                sw_save.at[ei, 'time_sym_dip_b4'] = np.nan
+                sw_save.at[ei, 'time_symh_min_b4'] = np.nan
+                sw_save.at[ei, 'time_sym_rec_b4'] = np.nan
+                sw_save.at[ei, 'symh_min_b4'] = np.nan
 
             # after
-            sw_save.at[ei, 'time_sym_dip_af'] = saf
-            sw_save.at[ei, 'time_symh_min_af'] = sym['time_min'].iloc[af_iloc]
-            sw_save.at[ei, 'time_sym_rec_af'] = sym['time_end'].iloc[af_iloc]
-            sw_save.at[ei, 'symh_min_af'] = sym['symh_min'].iloc[af_iloc]
+            if saf is not np.nan:
+                af_iloc = np.where(saf == sym['time_start'])[0][0]
+                sw_save.at[ei, 'time_sym_dip_af'] = saf
+                sw_save.at[ei, 'time_symh_min_af'] = sym['time_min'].iloc[af_iloc]
+                sw_save.at[ei, 'time_sym_rec_af'] = sym['time_end'].iloc[af_iloc]
+                sw_save.at[ei, 'symh_min_af'] = sym['symh_min'].iloc[af_iloc]
+            else:
+                sw_save.at[ei, 'time_sym_dip_af'] = np.nan
+                sw_save.at[ei, 'time_symh_min_af'] = np.nan
+                sw_save.at[ei, 'time_sym_rec_af'] = np.nan
+                sw_save.at[ei, 'symh_min_af'] = np.nan
 
             # AL
             alb4 = nearest(al_ind['time_start'], ct, direction='before')
             alaf = nearest(al_ind['time_start'], ct, direction='after')
-            b4_iloc = np.where(alb4 == al_ind['time_start'])[0][0]
-            af_iloc = np.where(alaf == al_ind['time_start'])[0][0]
 
             # before
-            sw_save.at[ei, 'time_al_dip_b4'] = alb4
-            sw_save.at[ei, 'time_al_min_b4'] = al_ind['time_min'].iloc[b4_iloc]
-            sw_save.at[ei, 'time_al_rec_b4'] = al_ind['time_end'].iloc[b4_iloc]
-            sw_save.at[ei, 'al_min_b4'] = al_ind['al_index_min'].iloc[b4_iloc]
+            if alb4 is not np.nan:
+                b4_iloc = np.where(alb4 == al_ind['time_start'])[0][0]
+                sw_save.at[ei, 'time_al_dip_b4'] = alb4
+                sw_save.at[ei, 'time_al_min_b4'] = al_ind['time_min'].iloc[b4_iloc]
+                sw_save.at[ei, 'time_al_rec_b4'] = al_ind['time_end'].iloc[b4_iloc]
+                sw_save.at[ei, 'al_min_b4'] = al_ind['al_index_min'].iloc[b4_iloc]
+            else:
+                sw_save.at[ei, 'time_al_dip_b4'] = np.nan
+                sw_save.at[ei, 'time_al_min_b4'] = np.nan
+                sw_save.at[ei, 'time_al_rec_b4'] = np.nan
+                sw_save.at[ei, 'al_min_b4'] = np.nan
 
             # after
-            sw_save.at[ei, 'time_al_dip_af'] = alaf
-            sw_save.at[ei, 'time_al_min_af'] = al_ind['time_min'].iloc[af_iloc]
-            sw_save.at[ei, 'time_al_rec_af'] = al_ind['time_end'].iloc[af_iloc]
-            sw_save.at[ei, 'al_min_af'] = al_ind['al_index_min'].iloc[af_iloc]
+            if alaf is not np.nan:
+                af_iloc = np.where(alaf == al_ind['time_start'])[0][0]
+                sw_save.at[ei, 'time_al_dip_af'] = alaf
+                sw_save.at[ei, 'time_al_min_af'] = al_ind['time_min'].iloc[af_iloc]
+                sw_save.at[ei, 'time_al_rec_af'] = al_ind['time_end'].iloc[af_iloc]
+                sw_save.at[ei, 'al_min_af'] = al_ind['al_index_min'].iloc[af_iloc]
+            else:
+                sw_save.at[ei, 'time_al_dip_af'] = np.nan
+                sw_save.at[ei, 'time_al_min_af'] = np.nan
+                sw_save.at[ei, 'time_al_rec_af'] = np.nan
+                sw_save.at[ei, 'al_min_af'] = np.nan
 
             # limit omni data by halfwidth
             om_epi = om_df.copy()
@@ -194,11 +218,19 @@ def nearest(items, pivot, direction="both"):
     """
     if direction == "before":
         items = [x for x in items if x <= pivot]
-        return min(items, key=lambda x: pivot - x)
+        if len(items) != 0:
+            return min(items, key=lambda x: pivot - x)
+        else:
+            return np.nan
 
     elif direction == "after":
         items = [x for x in items if x >= pivot]
-        return min(items, key=lambda x: x - pivot)
-
+        if len(items) != 0:
+            return min(items, key=lambda x: x - pivot)
+        else:
+            return np.nan
     else:  # both (original behavior)
-        return min(items, key=lambda x: abs(x - pivot))
+        if len(items) != 0:
+            return min(items, key=lambda x: abs(x - pivot))
+        else:
+            return np.nan
