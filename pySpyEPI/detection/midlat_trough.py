@@ -18,6 +18,8 @@ def zero_crossings(arr, lat):
     ----------
     arr : array-like
         array to be analyzed for zero crossings
+    lat : array-like
+        latitudes that correspond to arr
 
     Returns
     -------
@@ -44,8 +46,16 @@ def zero_crossings(arr, lat):
     # record if the slope is negative or positive
     m_sign = list()
     for cind in icross:
-        ind_bf = cind - 1
-        ind_af = cind + 1
+        if (cind != 0) & (cind != len(arr)):
+            ind_bf = cind - 1
+            ind_af = cind + 1
+        elif (cind == 0):
+            ind_bf = cind
+            ind_af = cind + 1
+        else:
+            ind_bf = cind - 1
+            ind_af = cind
+
         slope = (arr[ind_bf] - arr[ind_af]) / (lat[ind_bf] - lat[ind_af])
         intercept = arr[cind] - slope * lat[cind]
         zero_lat.append(-intercept / slope)
@@ -145,7 +155,7 @@ def find_trough_lat(data, equator_bound=35, auroral_bound=75, set_lat=55,
             z2_index = z_second.index
 
             # iterate through the crossings assuming there is more than 1
-            if len(zero_cross_df["mlats"] > 1):
+            if len(zero_cross_df["mlats"]) > 1:
                 for r in range(len(z_first)):
                     # get index of first crossing
                     z_f = z_first.index[r]
