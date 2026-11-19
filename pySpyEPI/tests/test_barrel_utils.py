@@ -25,7 +25,7 @@ class TestBarrelUtils(unittest.TestCase):
 
         result = np.all(out == np.array(bu.find_all_gaps(arr)))
 
-        self.assertEqual(result, True)
+        self.assertTrue(result)
 
     def test_find_all_gaps_absent(self):
         """Test find_all_gaps without gaps present."""
@@ -35,7 +35,7 @@ class TestBarrelUtils(unittest.TestCase):
 
         result = np.all(out == np.array(bu.find_all_gaps(arr)))
 
-        self.assertEqual(result, True)
+        self.assertTrue(result)
 
 
     def test_find_nan_ranges_some(self):
@@ -45,7 +45,7 @@ class TestBarrelUtils(unittest.TestCase):
 
         result = np.all(out == np.array(bu.find_nan_ranges(arr)))
 
-        self.assertEqual(result, True)
+        self.assertTrue(result)
 
 
     def test_find_nan_ranges_none(self):
@@ -55,7 +55,7 @@ class TestBarrelUtils(unittest.TestCase):
 
         result = np.all(out == np.array(bu.find_nan_ranges(arr)))
 
-        self.assertEqual(result, True)
+        self.assertTrue(result)
 
     def test_find_nan_ranges_all(self):
         """Test find_nan_ranges when all are nan."""
@@ -64,4 +64,4 @@ class TestBarrelUtils(unittest.TestCase):
 
         result = np.all(out == np.array(bu.find_nan_ranges(arr)))
 
-        self.assertEqual(result, True)
+        self.assertTrue(result)

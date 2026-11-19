@@ -27,7 +27,7 @@ class TestTestCandidates(unittest.TestCase):
         out = np.array([0, 0, 1, 0, 1, 0])
 
         result = np.all(out == tcan.no_doubbubs(peaks, properties))
-        self.assertEqual(result, True)
+        self.assertTrue(result)
 
     def test_no_doubbubs_absent(self):
         """Test no_doubbubs without doubles present."""
@@ -39,4 +39,4 @@ class TestTestCandidates(unittest.TestCase):
         out = np.array([0, 0, 0, 0, 0, 0])
 
         result = np.all(out == tcan.no_doubbubs(peaks, properties))
-        self.assertEqual(result, True)
+        self.assertTrue(result)
