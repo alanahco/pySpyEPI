@@ -13,9 +13,12 @@ time_update
 myround_ud
 """
 import numpy as np
-import apexpy
 import datetime as dt
 
+try:
+    import apexpy
+except ImportError:
+    apexpy = None
 
 def time2lonRange():
     """ return array of time to longitude range
@@ -86,6 +89,11 @@ def convert_to_mag(lat, lon, time):
     Change made by alanahco@umich.edu on 09/29/2025
         instead of apex at 0km, using quasi-dipole
     """
+
+    # raise error if apexpy is not available
+    if apexpy is None:
+        raise ValueError('apexpy is not available.')
+
     # Establish Apex
     apex = apexpy.Apex(date=time.year)
 
