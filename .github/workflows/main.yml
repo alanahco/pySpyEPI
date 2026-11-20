@@ -12,15 +12,20 @@ jobs:
       fail-fast: false
       matrix:
         os: ["ubuntu-latest", "windows-latest", "macos-latest"]
-        python-version: ["3.11", "3.12", "3.13"]
+        python-version: ["3.11", "3.12", "3.13", "3.14"]
         numpy_ver: ["latest"]
         test_config: ["standard"]
         include:
           # NEP29 compliance settings
-          - python-version: "3.10"
-            numpy_ver: "1.25"
+          - python-version: "3.12"
+            numpy_ver: "2.3"
             os: ubuntu-latest
             test_config: "NEP29"
+          # Apexpy integration settings
+          - python-version: "3.11"
+            numpy_ver: "latest"
+            os: ubuntu-latest
+            test_config: "apexpy"
 
     name: Test ${{ matrix.test_config }} using Python ${{ matrix.python-version }} on ${{ matrix.os }} with numpy ${{ matrix.numpy_ver }}
     runs-on: ${{ matrix.os }}
@@ -35,11 +40,11 @@ jobs:
       if: ${{ matrix.test_config != 'NEP29' && matrix.os != 'macos-latest' }}
       run: pip install .[test]
 
-    - name: Install standard dependencies MacOS
-      if: ${{ matrix.test_config != 'NEP29' && matrix.os == 'macos-latest' }}
+    - name: Install apexpy extras
+      if: ${{ matrix.test_config == 'apexpy' }}
       run:  |
-          brew reinstall gcc@15
-          CC=/opt/homebrew/bin/gcc-15 FF=/opt/homebrew/bin/gfortran-15 pip install --upgrade-strategy only-if-needed .[test]
+        pip install .[apex]
+        python -c "import apexpy; print(apexpy.__version__)"
 
     - name: Install NEP29 dependencies
       if: ${{ matrix.test_config == 'NEP29'}}
