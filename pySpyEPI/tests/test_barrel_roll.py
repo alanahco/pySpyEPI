@@ -27,6 +27,7 @@ class TestBarrelRollFuncs(unittest.TestCase):
         return
 
     def test_simple_barrel_forward(self):
+        """Test success of `simple_barrel` with a large barrel."""
         # Set a second array of the same shape and range, but different values
         xvar = np.linspace(np.nanmin(self.in_arr), np.nanmax(self.in_arr),
                            self.in_arr.shape[0])
