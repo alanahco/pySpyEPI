@@ -45,6 +45,11 @@ lp_flag : LP flag for high gain and low gain probes
 te_jump : if te jumped from one point to the next (not continuous) more than
         500 K during epi, then te_jump is 1 otherwise it is 0 after removing
         outliers but before a median filter
+te_dif_b4 : temperature difference from one point to the next before median
+            filtering
+te_dif_af : temperature difference from one point to the next after median
+            filtering. This with te_dif_b4 could help determine if the te_jump
+            is still useable.
 time_lpsweep : seconds between last LP sweep and first/left edge
                 will be 0 seconds if an LP sweep occurs during depletion
 {loc}_dte_{measure} : measure of Te error at {loc}
@@ -52,3 +57,6 @@ fnum : file number string. If it is the old file format, this number will be
         '0602', and if it is the new format, the number will be '0701', this
         will help when dte is smaller because original error is not taken into
         account because error is empty in new files
+pass_id : format %Y%m%d_%H%M_{sat}{#} for each satellite pass meant to be used
+            as an identifier for detections during the same pass. Will match
+            detection file.

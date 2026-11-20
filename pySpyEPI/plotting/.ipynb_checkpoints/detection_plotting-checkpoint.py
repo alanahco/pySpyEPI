@@ -17,7 +17,7 @@ from pySpyEPI.plotting import plotL1
 
 
 def flag_markers(ax, peaks, properties, stats_df, barrel_df,
-                 col_pass='C1', col_fail='red', col_mlat_flag='#E8BCF0',
+                 col_pass='C1', col_fail='#32CD32', col_mlat_flag='#E8BCF0',
                  use_barrel=True, fail_gradient=True, light_range=None):
     """Plot the flags in different styles
 
@@ -37,7 +37,7 @@ def flag_markers(ax, peaks, properties, stats_df, barrel_df,
         Created by pySpyEPI.barrel.barrel_roll.triple_barrel
     col_pass, col_fail, col_mlat_flag,: strings
         color codes for flags
-        Defaults in order #028A0F, red, #B2FBA5
+        Defaults in order #028A0F, #32CD32, #B2FBA5
     Returns
     -------
     f_marks : list-like
@@ -642,7 +642,7 @@ def detection_plot(data_df, x_str, barrel_df, stats_df, peaks, properties,
     ax_list.append(ax)
     lsdd_ax(ax, data_df, x_str, barrel_df, stats_df, peaks, properties,
             flag_mark=flag_mark, xtype=xtype, leg_ax=lax, xlim=None,
-            xlab=xlab, leg_loc='center_left')
+            xlab=xlab, leg_loc='center left')
 
     # add shading
     if shade_epi:

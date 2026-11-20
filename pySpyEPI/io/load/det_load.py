@@ -111,7 +111,7 @@ def load_detections(date_array, obs, file_dir, filetype, sat, daily=True):
     return df_full
 
 
-def epi_only(epi_df, lt_limit=None, mlat_limit=None):
+def epi_only(epi_df, lt_limit=None, mlat_limit=None, mlat_flag=True):
     """Filter EPB events from detection files.
 
     Parameters
@@ -122,9 +122,10 @@ def epi_only(epi_df, lt_limit=None, mlat_limit=None):
         default None, local time limit will be set to 18 to 10 LT
     mlat_limit : None Type or int
         limit the data by +/- mlat limit
-    wdr_thresh : float
-        maximum value for to reintroduce some 9 flags
-        default 0.95
+    mlat_flag : boolean
+        if True (default), detections with a magnetic latitude flag greater or
+        equal to 4, not equal to 4.1, and not equal to 5.1 will be removed
+        If False, all detections are left in.
     Returns
     -------
     bubs : dataframe
@@ -134,20 +135,13 @@ def epi_only(epi_df, lt_limit=None, mlat_limit=None):
     """
     bubs = epi_df.copy()
 
-    # Update WDR
-    wdr_mask = ((bubs['epi_flag'] == 9) & (bubs['med_epi_l'] <= 0.995)
-                & (bubs['med_epi_r'] <= 0.995)
-                & (bubs['p20_epi_r'] < 0.95)
-                & (bubs['p20_epi_l'] < 0.95)
-                & (bubs['bub_in_bub'] == 0))
-    bubs.loc[wdr_mask, 'epi_flag'] = 1
-
     # bubble flags
     bubs = bubs[bubs['epi_flag'] == 1]
 
-    mlat_mask = ((bubs['mlat_flag'] < 4) | (bubs['mlat_flag'] == 4.1)
-                 | (bubs['mlat_flag'] == 5.1))
-    bubs = bubs[mlat_mask]
+    if mlat_flag:
+        mlat_mask = ((bubs['mlat_flag'] < 4) | (bubs['mlat_flag'] == 4.1)
+                     | (bubs['mlat_flag'] == 5.1))
+        bubs = bubs[mlat_mask]
 
     # create lt_hr column
     # limit by local times

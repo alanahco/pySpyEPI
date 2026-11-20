@@ -17,6 +17,7 @@ import datetime as dt
 import pandas as pd
 import scipy
 import os
+import warnings
 from pySpyEPI.utils.sats import gold_utils as go_ut
 
 
@@ -291,7 +292,8 @@ def GOLD_barrel(st, output_data_folder, lon_range=None, closest=False):
                      'depletion': baseline_subtracted_matrix}})
 
 
-def GOLD_no_barrel(st, output_data_folder, lon_range=None, closest=False):
+def GOLD_no_barrel(st, output_data_folder, input_data_folder, lon_range=None,
+                   closest=False):
     """create a non-barrel file for desired swarm/ GOLD conjunction.
 
     Parameters
@@ -323,10 +325,10 @@ def GOLD_no_barrel(st, output_data_folder, lon_range=None, closest=False):
     if st.hour < 12:
         # Get GOLD files for day before
         st_use = st - dt.timedelta(days=1)
-        dcA, dcB, timeA, timeB = open_GOLD_nc(st_use)
+        dcA, dcB, timeA, timeB = open_GOLD_nc(st_use, input_data_folder)
     else:
         # Get GOLD files for same day
-        dcA, dcB, timeA, timeB = open_GOLD_nc(st)
+        dcA, dcB, timeA, timeB = open_GOLD_nc(st, input_data_folder)
 
     # get index of conjunction
     min_ind, list_inds = go_ut.get_conj_ind(st, lon_range=lon_range)
@@ -334,7 +336,7 @@ def GOLD_no_barrel(st, output_data_folder, lon_range=None, closest=False):
     if closest:
         ind_use = [min_ind]
         if lon_range is None:
-            print('Warning: need to supply lon range!')
+            warnings.warn('Supply Longitude Range!')
     else:
         ind_use = list_inds
 
@@ -346,7 +348,8 @@ def GOLD_no_barrel(st, output_data_folder, lon_range=None, closest=False):
 
         # Check time to make sure that we are dealing with the same indices
         if len(dcA['time']) != 18:
-            print('Check dcA time length')
+            warnings.warn('Check dcA time length, skipping')
+            continue
 
         # get A and B times
         tA = dcA['time'][i]

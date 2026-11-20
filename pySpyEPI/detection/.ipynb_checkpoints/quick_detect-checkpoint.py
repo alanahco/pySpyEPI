@@ -12,7 +12,8 @@ from pySpyEPI.detection.stats import cand_info
 from pySpyEPI.detection import midlat_trough as ml_tr
 
 
-def detect_swarm(st, ed, satellite, fdir, EFI_bool=False, trough=False):
+def detect_swarm(st, ed, satellite, fdir, EFI_bool=False, trough=False,
+                 min_np=0):
     """Load and detect Swarm EPIs from given time.
 
     Parameters
@@ -31,11 +32,32 @@ def detect_swarm(st, ed, satellite, fdir, EFI_bool=False, trough=False):
     trough : boolean
         if True, trough lats will be calculated
         if False, +'- 45 degrees will be used
+    min_np : float
+        minimum density allowed before flagged as bad for IRR data
+        default 0
+    Returns
+    -------
+    irr : pd.DataFrame
+        Swarm IRR data
+    efi : pd.DataFrame
+        Swarm EFI data
+    barrel_df : pd.DataFrame
+        dataframe that includes: ne, filt_ne, detrended_ne, filt_det_ne,
+        ne_scale, x_scale, time
+        all nan values have been put back into all of those
+    peaks, properties: array-like
+        list of peak indices and their properties
+        see https://docs.scipy.org/doc/scipy/
+        reference/generated/scipy.signal.find_peaks.html
+        for detailed explanation
+    stats_df : pd.DataFrame
+        includes info about candidates and candidate tests
+        time of center and edges
     """
 
     # Load data bsed on st and ed ---------------------------------------------
     data, IRR_bool, EFI_bool2 = swarm_load.load_all(
-        st, ed, satellite, fdir, EFI=False)
+        st, ed, satellite, fdir, EFI=False, min_np=min_np)
 
     if IRR_bool:
         irr = data['IRR']

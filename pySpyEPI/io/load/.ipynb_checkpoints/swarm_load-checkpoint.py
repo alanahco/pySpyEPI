@@ -7,7 +7,6 @@ List Functions
 load_IRR
 load_EFI
 load_all
-quick_load
 """
 import pandas as pd
 import numpy as np
@@ -18,7 +17,7 @@ from pySpyEPI.utils import coords
 from pySpyEPI.utils.sats import swarm_utils as swu
 
 
-def load_IRR(start_date, end_date, satellite, fdir):
+def load_IRR(start_date, end_date, satellite, fdir, min_np=0):
     """Load Swarm IRR dataset.
 
     Parameters
@@ -31,6 +30,9 @@ def load_IRR(start_date, end_date, satellite, fdir):
         'A', 'B', or 'C'
     fdir : str
         File directory string
+    min_np : float
+        minimum density allowed before flagged as bad
+        default 0
 
     Returns
     -------
@@ -103,7 +105,7 @@ def load_IRR(start_date, end_date, satellite, fdir):
         # First add LT_hour
         df["lt_hour"] = df["lt"].apply(
             lambda tim: tim.hour + tim.minute / 60 + tim.second / 3600)
-        flg = swu.create_ne_flag(df)
+        flg = swu.create_ne_flag(df, min_np=min_np)
         df['ne_flag'] = flg
 
         # calculate ne delta nes with flag removed
@@ -250,7 +252,8 @@ def load_EFI(start_date, end_date, satellite, fdir):
     return df2
 
 
-def load_all(start_date, end_date, satellite, fdir, IRR=True, EFI=True):
+def load_all(start_date, end_date, satellite, fdir, IRR=True, EFI=True,
+             min_np=0):
     """Load all four datasets.
 
     Parameters
@@ -267,7 +270,9 @@ def load_all(start_date, end_date, satellite, fdir, IRR=True, EFI=True):
         True default- IRR data will be retreived
     EFI : bool kwarg
         True default- EFI data will be retreived
-
+    min_np : float
+        minimum density allowed before flagged as bad for IRR data
+        default 0
     Returns
     -------
     data : Dictionary
@@ -291,14 +296,15 @@ def load_all(start_date, end_date, satellite, fdir, IRR=True, EFI=True):
     # open IRR if True
     if IRR:
         try:
-            IRR_data = load_IRR(start_date, end_date, satellite, fdir=fdir)
+            IRR_data = load_IRR(start_date, end_date, satellite, fdir=fdir,
+                                min_np=min_np)
 
             # if start_date.day != end_date.day
             # Get next day too-- midnight to end_date
             if start_date.day != end_date.day:
                 if (midnight != end_date):
                     IRR_data2 = load_IRR(midnight, end_date, satellite,
-                                         fdir=fdir)
+                                         fdir, min_np=min_np)
                     IRR_data = pd.concat([IRR_data, IRR_data2],
                                          ignore_index=True)
 
@@ -325,7 +331,7 @@ def load_all(start_date, end_date, satellite, fdir, IRR=True, EFI=True):
             if start_date.day != end_date.day:
                 if (midnight != end_date):
                     EFI_data2 = load_EFI(midnight, end_date, satellite,
-                                         fdir=fdir)
+                                         fdir)
                     EFI_data = pd.concat([EFI_data, EFI_data2],
                                          ignore_index=True)
 
@@ -343,111 +349,3 @@ def load_all(start_date, end_date, satellite, fdir, IRR=True, EFI=True):
             print(f'Warning: No EFI File for {start_date}')
 
     return data, IRR, EFI
-
-
-def quick_load(start_date, end_date, satellite, fdir):
-    """Load Swarm IRR dataset.
-
-    Parameters
-    ----------
-    start_date : datetime
-        starting time
-    end_date : dateteim
-        ending time
-    satellite : str
-        'A', 'B', or 'C'
-    fdir : str
-        File directory string
-
-    Returns
-    -------
-    df2 : Dataframe
-        Dataframe of swarm data
-        columns: Time, Ne, bNe, fNe, Grad_Ne_at_100km, Grad_Ne_at_50km,
-        Grad_Ne_at_20km, delta_Ne10s, delta_Ne20s, delta_Ne40s, ROD, RODI10,
-        RODI20, mVTEC, mROT, Te, Ne_flag, Ionosphere_region_flag, PCP_flag,
-        mROTI10, mROTI20, IBI_flag, IPIR_Index, TEC_STD,
-        Latitude, Longitude, Mag_Lat, Mag_Lon, and LT
-    Notes
-    -----
-    The returned delta_NeXs are scaled by Ne
-    """
-    # Set Directory
-    base_path = f"{fdir}/IPD/Sat_{satellite}"
-    date_yr = start_date.strftime('%Y')
-    date_str = start_date.strftime('%Y%m%d')
-
-    dir_path = f"{base_path}/{date_yr}/{date_str}/"
-    search_pattern = os.path.join(dir_path, "*.cdf")
-    filename = 'swarm_file'
-
-    if len(glob.glob(search_pattern)) > 0:
-        filename = glob.glob(search_pattern)[0]
-
-    if os.path.exists(filename):
-        variables = [
-            "Timestamp", "Latitude", "Longitude", "Ne", "Background_Ne",
-            "Foreground_Ne", "Grad_Ne_at_100km", "Grad_Ne_at_50km",
-            "Grad_Ne_at_20km", "delta_Ne10s", "delta_Ne20s", "delta_Ne40s",
-            "ROD", "RODI10s", "RODI20s", "mVTEC", "mROT", "Te",
-            "Ne_quality_flag", "Ionosphere_region_flag", "PCP_flag",
-            "mROTI10s", "mROTI20s", "IBI_flag", "IPIR_index", "TEC_STD",
-            "Radius"
-        ]
-
-        data, cdf_file = swu.load_cdf_data(filename, variables)
-        lat, lon, time = swu.extract_common_coords(cdf_file, satellite)
-
-        local_time = coords.longitude_to_local_time(lon, time)
-
-        # calculate altitude and convert to km
-        alt = data['Radius'] / 1000 - coords.earth_radius(lat) / 1000
-
-        # set up dataframe
-        df = pd.DataFrame({
-            "time": time, "ne": data["Ne"], "bne": data["Background_Ne"],
-            "fne": data["Foreground_Ne"],
-            "grad_ne_at_100km": data["Grad_Ne_at_100km"],
-            "grad_ne_at_50km": data["Grad_Ne_at_50km"],
-            "grad_ne_at_20km": data["Grad_Ne_at_20km"], "rod": data["ROD"],
-            "rodi10": data["RODI10s"], "rodi20": data["RODI20s"],
-            "mvtec": data["mVTEC"], "mrot": data["mROT"], "te": data["Te"],
-            "ionosphere_region_flag": data["Ionosphere_region_flag"],
-            "pcp_flag": data["PCP_flag"], "mroti10": data["mROTI10s"],
-            "mroti20": data["mROTI20s"], "ibi_flag": data["IBI_flag"],
-            "ipir_index": data["IPIR_index"], "tec_std": data["TEC_STD"],
-            "lat": lat, "lon": lon,
-            "lt": local_time, "altitude": alt
-        })
-
-        # Create Ne Flag
-        # First add LT_hour
-        df["lt_hour"] = df["lt"].apply(
-            lambda tim: tim.hour + tim.minute / 60 + tim.second / 3600)
-        flg = swu.create_ne_flag(df)
-        df['ne_flag'] = flg
-
-        # calculate ne delta nes with flag removed
-        # calculate your own delta_NeXs instead of using what is given
-        df_calc = df.copy()
-        df_calc.loc[df_calc['ne_flag'] > 2, 'ne'] = np.nan
-        delta_Ne10s = calc.calc_delta_ne(df_calc["ne"], t=10, freq=1)
-        delta_Ne20s = calc.calc_delta_ne(df_calc["ne"], t=20, freq=1)
-        delta_Ne40s = calc.calc_delta_ne(df_calc["ne"], t=40, freq=1)
-
-        df['delta_ne10s'] = delta_Ne10s
-        df['delta_ne20s'] = delta_Ne20s
-        df['delta_ne40s'] = delta_Ne40s
-
-        # set delta ne bad ne flags to nan
-        df_calc.loc[df_calc['ne_flag'] > 2, 'delta_ne10s'] = np.nan
-        df_calc.loc[df_calc['ne_flag'] > 2, 'delta_ne20s'] = np.nan
-        df_calc.loc[df_calc['ne_flag'] > 2, 'delta_ne40s'] = np.nan
-        df_calc.loc[df_calc['ne_flag'] > 2, 'ne'] = np.nan
-
-        # cut off by time
-        df2 = df[(df['time'] > start_date) & (df['time'] < end_date)]
-    else:
-        df2 = pd.DataFrame()
-
-    return df2

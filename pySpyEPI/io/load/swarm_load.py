@@ -17,7 +17,7 @@ from pySpyEPI.utils import coords
 from pySpyEPI.utils.sats import swarm_utils as swu
 
 
-def load_IRR(start_date, end_date, satellite, fdir):
+def load_IRR(start_date, end_date, satellite, fdir, min_np=0):
     """Load Swarm IRR dataset.
 
     Parameters
@@ -30,6 +30,9 @@ def load_IRR(start_date, end_date, satellite, fdir):
         'A', 'B', or 'C'
     fdir : str
         File directory string
+    min_np : float
+        minimum density allowed before flagged as bad
+        default 0
 
     Returns
     -------
@@ -102,7 +105,7 @@ def load_IRR(start_date, end_date, satellite, fdir):
         # First add LT_hour
         df["lt_hour"] = df["lt"].apply(
             lambda tim: tim.hour + tim.minute / 60 + tim.second / 3600)
-        flg = swu.create_ne_flag(df)
+        flg = swu.create_ne_flag(df, min_np=min_np)
         df['ne_flag'] = flg
 
         # calculate ne delta nes with flag removed
@@ -249,7 +252,8 @@ def load_EFI(start_date, end_date, satellite, fdir):
     return df2
 
 
-def load_all(start_date, end_date, satellite, fdir, IRR=True, EFI=True):
+def load_all(start_date, end_date, satellite, fdir, IRR=True, EFI=True,
+             min_np=0):
     """Load all four datasets.
 
     Parameters
@@ -266,7 +270,9 @@ def load_all(start_date, end_date, satellite, fdir, IRR=True, EFI=True):
         True default- IRR data will be retreived
     EFI : bool kwarg
         True default- EFI data will be retreived
-
+    min_np : float
+        minimum density allowed before flagged as bad for IRR data
+        default 0
     Returns
     -------
     data : Dictionary
@@ -290,14 +296,15 @@ def load_all(start_date, end_date, satellite, fdir, IRR=True, EFI=True):
     # open IRR if True
     if IRR:
         try:
-            IRR_data = load_IRR(start_date, end_date, satellite, fdir=fdir)
+            IRR_data = load_IRR(start_date, end_date, satellite, fdir=fdir,
+                                min_np=min_np)
 
             # if start_date.day != end_date.day
             # Get next day too-- midnight to end_date
             if start_date.day != end_date.day:
                 if (midnight != end_date):
                     IRR_data2 = load_IRR(midnight, end_date, satellite,
-                                         fdir=fdir)
+                                         fdir, min_np=min_np)
                     IRR_data = pd.concat([IRR_data, IRR_data2],
                                          ignore_index=True)
 
@@ -324,7 +331,7 @@ def load_all(start_date, end_date, satellite, fdir, IRR=True, EFI=True):
             if start_date.day != end_date.day:
                 if (midnight != end_date):
                     EFI_data2 = load_EFI(midnight, end_date, satellite,
-                                         fdir=fdir)
+                                         fdir)
                     EFI_data = pd.concat([EFI_data, EFI_data2],
                                          ignore_index=True)
 

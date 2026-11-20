@@ -7,8 +7,12 @@ List Functions
 eia_info
 """
 import pandas as pd
-from pyValEIA.eia.detection import eia_complete
 import numpy as np
+import warnings
+try:
+    from pyValEIA.eia.detection import eia_complete
+except ImportError:
+    eia_complete = None
 
 
 def eia_info(pass_id, time, lat, lon, mlat, mlon, lt, alt, density,
@@ -86,19 +90,24 @@ def eia_info(pass_id, time, lat, lon, mlat, mlon, lt, alt, density,
 
     lt_center = lt_lim[abs(mlat_lim).argmin()]
 
-    # try to run eia_complete
-    try:
-        (sort_lat, den_filt2, eia_state,
-         z_lat, plats, p3lats) = eia_complete(
-             mlat_lim, density_lim, "Ne", filt=filt, interpolate=interpolate,
-             barrel_envelope=barrel_envelope, envelope_lower=envelope_lower,
-             envelope_upper=envelope_upper, barrel_radius=barrel_radius,
-             window_lat=window_lat)
-    except Exception:
-        eia_state = 'unknown'
+    # try to run eia_complete, if pyValEIA exists
+    if eia_complete is None:
+        warnings.warn("Warning: pyValEIA not available.")
+        eia_state = 'unavailable'
         plats = [None]
+    else:
+        try:
+            (sort_lat, den_filt2, eia_state,
+             z_lat, plats, p3lats) = eia_complete(
+                 mlat_lim, density_lim, "Ne", filt=filt,
+                 interpolate=interpolate, barrel_envelope=barrel_envelope,
+                 envelope_lower=envelope_lower, envelope_upper=envelope_upper,
+                 barrel_radius=barrel_radius, window_lat=window_lat)
+        except Exception:
+            eia_state = 'unknown'
+            plats = [None]
 
-    if eia_state != 'unknown':
+    if (eia_state != 'unknown') & (eia_state != 'unavailable'):
         # Find trough lat between peaks by using filtered density and sort lats
         if len(plats) == 2:
             tr_n = den_filt2[(sort_lat > min(plats)) & (sort_lat < max(plats))]

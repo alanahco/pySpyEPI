@@ -20,7 +20,6 @@ keywords = [
   "heliophysics",
 ]
 dependencies = [
-  "apexpy",
   "cartopy",
   "cdflib",
   "matplotlib",
@@ -32,5 +31,13 @@ dependencies = [
   "madrigalWeb",
   "viresclient",
   "cdasws",
-  "pyValEIA"
+  ]
+  
+  [project.optional-dependencies]
+  apex = ["apexpy"]
+  pyval = ["pyValEIA"]
+  test = [
+      "coverage[toml]",
+      "flake8",
+      "flake8-docstrings"
   ]

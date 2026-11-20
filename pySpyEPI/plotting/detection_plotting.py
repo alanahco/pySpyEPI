@@ -642,7 +642,7 @@ def detection_plot(data_df, x_str, barrel_df, stats_df, peaks, properties,
     ax_list.append(ax)
     lsdd_ax(ax, data_df, x_str, barrel_df, stats_df, peaks, properties,
             flag_mark=flag_mark, xtype=xtype, leg_ax=lax, xlim=None,
-            xlab=xlab, leg_loc='center_left')
+            xlab=xlab, leg_loc='center left')
 
     # add shading
     if shade_epi:

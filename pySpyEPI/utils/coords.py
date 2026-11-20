@@ -20,9 +20,13 @@ geodetic_to_ecef
 """
 import pandas as pd
 import numpy as np
-import apexpy
 from scipy.signal import butter, filtfilt
 from pySpyEPI.utils import calc
+
+try:
+    import apexpy
+except ImportError:
+    apexpy = None
 
 
 def longitude_to_local_time(longitude, utc_time):
@@ -64,6 +68,11 @@ def compute_qd_coords(lat, lon, rad_km, time):
     mlon : array-like
         magnetic longitude
     """
+
+    # raise error if apexpy is not available
+    if apexpy is None:
+        raise ValueError('apexpy is not available.')
+
     apex = apexpy.Apex(date=time[0])
     mlat, mlon = apex.convert(lat, lon, 'geo', 'qd')
 

@@ -36,7 +36,7 @@ def swarm_detect_daily(date_array, satellite, fdir, file_dir, fig_dir=None,
                        e_lo_large=0.05, e_up_small=0.1, e_lo_small=0.05,
                        upper_weight=2, lower_weight=1, scale_n=True,
                        exp_inc=True, ex_scale=2, filter_barrel=True,
-                       svg_window=5, svg_poly=2, eia_mlat=30):
+                       svg_window=5, svg_poly=2, eia_mlat=30, min_np=0):
     """Create monthly detection files for bubble detection.
 
     Parameters
@@ -178,6 +178,9 @@ def swarm_detect_daily(date_array, satellite, fdir, file_dir, fig_dir=None,
         magnetic lat and lon, altitude, lshell, and lt_str
     eia_mlat : float
         maximum search magnetic latitude range for EIA type.
+    min_np : float
+        minimum density allowed before flagged as bad for IRR data
+        default 0
     Returns
     -------
     epi_all : list of DataFrame
@@ -225,7 +228,7 @@ def swarm_detect_daily(date_array, satellite, fdir, file_dir, fig_dir=None,
 
         # open only IRR first
         data, IRR_bool, EFI_bool = load.load_all(
-            day_st, day_ed, satellite, fdir, EFI=False)
+            day_st, day_ed, satellite, fdir, EFI=False, min_np=min_np)
 
         # if IRR_bool is false, skip the run
         if IRR_bool:
@@ -235,7 +238,7 @@ def swarm_detect_daily(date_array, satellite, fdir, file_dir, fig_dir=None,
 
         # see if day before also needs to be opened based on mlat
         IRR_update, EFI_update, EFI_bool = open_dayb4_check(
-            IRR, fdir, satellite, mlat_thresh=auroral_bound)
+            IRR, fdir, satellite, mlat_thresh=auroral_bound, min_np=min_np)
 
         # Limit by auroral upper bound
         IRR_lat = IRR_update[abs(IRR_update['mlat']) < auroral_bound]
@@ -316,7 +319,8 @@ def swarm_detect_daily(date_array, satellite, fdir, file_dir, fig_dir=None,
                      upper_weight=upper_weight, lower_weight=lower_weight,
                      scale_n=scale_n, exp_inc=exp_inc, ex_scale=ex_scale,
                      filter_barrel=filter_barrel, svg_window=svg_window,
-                     svg_poly=svg_poly, nflag_mask=nflag_mask)
+                     svg_poly=svg_poly, nflag_mask=nflag_mask, mlon_str='mlon',
+                     alt_str='altitude', lshell_str='l_shell')
 
                 # create figure
                 if fig_on:
@@ -399,7 +403,8 @@ def swarm_detect_daily(date_array, satellite, fdir, file_dir, fig_dir=None,
     return epi_all, eia_all
 
 
-def open_dayb4_check(IRR, fdir, satellite, mlat_thresh=70, IRR_only=False):
+def open_dayb4_check(IRR, fdir, satellite, mlat_thresh=70, IRR_only=False,
+                     min_np=0):
     """Open file of day before and incldue it in original dataframes
 
     Parameters
@@ -416,6 +421,9 @@ def open_dayb4_check(IRR, fdir, satellite, mlat_thresh=70, IRR_only=False):
     IRR_only : bool
         False default will open all files
         True will open only IRR file
+    min_np : float
+        minimum density allowed before flagged as bad
+        default 0
     Returns
     -------
     IRR_update : pd.DataFrame
@@ -432,7 +440,7 @@ def open_dayb4_check(IRR, fdir, satellite, mlat_thresh=70, IRR_only=False):
 
         # open day before of IRR only
         datab4, IRR_boolb4, EFI_boolb4 = load.load_all(
-            st_b4, ed_b4, satellite, fdir, EFI=False)
+            st_b4, ed_b4, satellite, fdir, EFI=False, min_np=min_np)
 
         # if IRR_bool is false, skip the run
         if IRR_boolb4:
@@ -463,7 +471,8 @@ def open_dayb4_check(IRR, fdir, satellite, mlat_thresh=70, IRR_only=False):
         ed_open = IRR_update["time"].iloc[-1]
 
         data_update, IRR_bool, EFI_bool = load.load_all(
-            st_open, ed_open, satellite, fdir, IRR=False, EFI=True)
+            st_open, ed_open, satellite, fdir, IRR=False, EFI=True,
+            min_np=min_np)
 
         # Get EFI data, make empty array if false
         if EFI_bool:

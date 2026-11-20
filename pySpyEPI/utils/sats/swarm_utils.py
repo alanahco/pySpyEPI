@@ -58,7 +58,7 @@ def extract_common_coords(cdf_file, satellite):
     return lat, lon, time
 
 
-def create_ne_flag(data, Np='ne'):
+def create_ne_flag(data, Np='ne', min_np=0):
     """ Create a new ne flag
     Parameters
     ----------
@@ -67,14 +67,15 @@ def create_ne_flag(data, Np='ne'):
     Np : str
         default 'Ne'
         plasma density column name in DataFrame
+    min_np : float
+        minimum density allowed before flagged as bad
+        default 0
     Returns
     -------
     flg : array of integers
         0 : okay to use
         5 : don't use, Ne Values that are too low
-            Ne < 10^4
-            OR
-            bNe < 10^4
+            Ne or bNe less than min_np
     Notes
     -----
     based on
@@ -93,7 +94,7 @@ def create_ne_flag(data, Np='ne'):
     # Initiate an array of Zeros
     flg = np.zeros(len(data[Np]))
 
-    Ne_mask = (data[Np] < 10**4)
+    Ne_mask = (data[Np] < min_np)
 
     flg[Ne_mask] = 5
 
